@@ -65,6 +65,8 @@ function isPageResponse<T>(data: ApiResponse<T>): data is BasePageList<T> {
   return !Array.isArray(data) && 'total' in data && 'list' in data
 }
 
+
+
 export function useTable<TApiFn extends (params: any) => Promise<ApiResponse<any>>>({
   listApiFn,
   deleteApiFn,
@@ -85,7 +87,6 @@ export function useTable<TApiFn extends (params: any) => Promise<ApiResponse<any
   const { navigateWithData } = usePageTransfer()
 
   const needsForm = Object.keys(formInitialValues).length > 0
-
   // 创建form实例
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = needsForm ? Form.useForm() : [null]
@@ -116,12 +117,10 @@ export function useTable<TApiFn extends (params: any) => Promise<ApiResponse<any
       queryClient.removeQueries({ queryKey: [stateQueryKey] })
     }
   }
-
   // 初始化状态
   useEffect(() => {
     if (cacheEnabled) {
       const initialState = queryClient.getQueryData<QueryState>([stateQueryKey])
-
       if (initialState) {
         form?.setFieldsValue(initialState.params)
         setQueryState(initialState.params)
@@ -137,7 +136,7 @@ export function useTable<TApiFn extends (params: any) => Promise<ApiResponse<any
     else {
       form?.setFieldsValue(formInitialValues)
     }
-  }, [cacheEnabled, form, formInitialValues, pagination, queryClient, stateQueryKey])
+  }, [cacheEnabled, form, pagination, queryClient, stateQueryKey])
 
   // -------------------- Query & Data Fetching --------------------
   const {
@@ -195,6 +194,7 @@ export function useTable<TApiFn extends (params: any) => Promise<ApiResponse<any
         }
         queryClient.setQueryData([stateQueryKey], state)
       }
+      setQueryState(values)
       if (pagination) {
         setPage(1)
       }
